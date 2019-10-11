@@ -1,5 +1,5 @@
 <?php
-namespace DIM;
+namespace dimensoes;
 
 /**
  * Model de entidade cliente
@@ -66,7 +66,7 @@ class Cliente{
      * @param $uf uf do cliente
      * @return void
      */
-    public function setProspect($cpf, $nome, $sexo, $idade, $email, $rua, $bairro, $cidade, $uf){
+    public function setCliente($cpf, $nome, $sexo, $idade, $email, $rua, $bairro, $cidade, $uf){
         $this->cpf = $cpf;
         $this->nome = $nome;
         $this->sexo = $sexo;
