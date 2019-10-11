@@ -1,13 +1,16 @@
 <?php
 namespace dimensoes;
 require_once('Cliente.php');
+require_once('Sumario.php');
 mysqli_report(MYSQLI_REPORT_STRICT);
-use dimensoes\cliente;
+use dimensoes\Cliente;
+use dimensoes\Sumario;
 
 class DimCliente{
 
     public function carregarDimCliente(){
-        
+        $sumario = new Sumario();
+
         $dataAtual = date('Y-m-d');
 
         try {
@@ -60,6 +63,8 @@ class DimCliente{
 
                     $sqlInsertDim->execute();
 
+                    $sumario->setQtdInclusoes();
+
                 }
 
                 $sqlComercial->close();
@@ -74,6 +79,8 @@ class DimCliente{
         }else{
             
         }
+
+        return $sumario;
 
     }
 
