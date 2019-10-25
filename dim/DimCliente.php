@@ -67,13 +67,6 @@ class DimCliente{
 
                 }
 
-                $sqlComercial->close();
-                $sqlDim->close();
-                $sqlInsertDim->close();
-
-                $connComercial->close();
-                $connDimensao->close();
-
             }
 
         }else{// Dimensão já contém dados
@@ -95,11 +88,11 @@ class DimCliente{
 
                 if( $resultDim->num_rows === 0 ){ //O cliente da comercial não está na dimensional
                     $sqlInsertDim = $connDimensao->prepare('INSERT INTO dim_cliente
-                                                            (cpf, nome, sexo, idade, rua, bairro, cidade, uf, data_ini))
+                                                            (cpf, nome, sexo, idade, rua, bairro, cidade, uf, data_ini)
                                                             VALUES
                                                             (?, ?, ?, ?, ?, ?, ?, ?, ?)');
                     
-                    $sqlInsertDim->bind_param("sssisssss",
+                    $sqlInsertDim->bind_param('sssisssss',
                         $linhaComercial['cpf'],
                         $linhaComercial['nome'],
                         $linhaComercial['sexo'],
@@ -150,13 +143,13 @@ class DimCliente{
                         $sqlUpdateDim->execute();
 
                         if( !$sqlUpdateDim->error ){
-                            $sqlInsertDim->$connDimensao->prepare('INSERT INTO dim_cliente
-                            (cpf, nome, sexo, idade, rua, bairro, cidade, uf, data_fim)
+                            $sqlInsertDim = $connDimensao->prepare('INSERT INTO dim_cliente
+                            (cpf, nome, sexo, idade, rua, bairro, cidade, uf, data_ini)
                             VALUES
                             (?,?,?,?,?,?,?,?,?)
                             ');
 
-                            $sqlInsertDim->$sqlInsertDim->bind_param("sssisssss",
+                            $sqlInsertDim->bind_param("sssisssss",
                                                         $linhaComercial['cpf'],
                                                         $linhaComercial['nome'],
                                                         $linhaComercial['sexo'],
@@ -169,7 +162,7 @@ class DimCliente{
                             );
 
                             $sqlInsertDim->execute();
-                            $sumario->setQtdAlteracoes;
+                            $sumario->setQtdAlteracoes();
 
                         }else{
                             throw new \Exception('Erro: Erro no processo de alteração');
