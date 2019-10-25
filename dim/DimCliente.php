@@ -85,7 +85,7 @@ class DimCliente{
                 $sqlDim = $connDimensao->prepare('SELECT SK_cliente, nome, cpf, sexo, idade, rua, bairro, cidade, uf
                                                     FROM dim_cliente
                                                     where cpf = ?
-                                                    and data_ini is null
+                                                    and data_fim is null
                                                 ');
                 
                 $sqlDim->bind_param('s', $linhaComercial['cpf']);
@@ -94,7 +94,7 @@ class DimCliente{
                 $resultDim = $sqlDim->get_result();
 
                 if( $resultDim->num_rows === 0 ){ //O cliente da comercial não está na dimensional
-                    $sqlInsertDim = $connComercial->prepare('insert into dim_cliente
+                    $sqlInsertDim = $connDimensao->prepare('INSERT INTO dim_cliente
                                                             (cpf, nome, sexo, idade, rua, bairro, cidade, uf, data_ini))
                                                             VALUES
                                                             (?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -145,7 +145,7 @@ class DimCliente{
                                     $linhaDim['uf'];
 
                     if( !$this->strIgual($strComercialTeste, $strDimensional) ){ //Teve atualização de registro
-                        $sqlUpdateDim = $connComercial->prepare('UPDATE dim_cliente SET data_fim = ? WHERE SK_cliente = ?');
+                        $sqlUpdateDim = $connDimensao->prepare('UPDATE dim_cliente SET data_fim = ? WHERE SK_cliente = ?');
                         $sqlUpdateDim->bind_param('si', $dataAtual, $linhaDim['SK_cliente']);
                         $sqlUpdateDim->execute();
 
@@ -183,9 +183,7 @@ class DimCliente{
                         $connComercial->close();
                         $sqlUpdateDim->close();
 
-                    }else{ // Não teve alteração no registro
-
-                    }
+                    }// Não teve alteração no registro
 
                 }
 
