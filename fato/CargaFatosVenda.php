@@ -67,16 +67,43 @@ class CargaFatosVenda{
                     $resultDimProduto = $sqlDimProduto->get_result();
                     $produto = $resultDimProduto->fetch_assoc();
 
-                    /** 
-                     * 
-                    */
+                    $fatoVenda = new FatoVenda();
+                    $fatoVenda->setFatoVenda($cliente['SK_cliente'], 
+                                                $produto['SK_produto'], 
+                                                $linhaPedido['cod_pedido'], 
+                                                $linhaData['SK_data'],
+                                                $linhaItem['preco_unit'], 
+                                                $linhaItem['quantidade'] 
+                                                );
+
+                    $sqlFatoVenda = $connDimensional->prepare('SELECT cod_fato_venda, SK_produto, SK_data, pedido, valor_venda, quantidade_venda FROM fato_vendas WHERE pedido = ? AND SK_profuto = ?');
+
+                    $sqlFatoVenda->bind_param('ii', $fatoVenda->pedido, $fatoVenda->SK_produto);
+                    $sqlFatoVenda->execute();
+                    
+                    $resultFatoVenda = $sqlFatoVenda->get_result();
+
+                    if($resultFatoVenda->num_rows === 0){
+                        $sqlInsert = $connDimensional->prepare('INSERT INTO fato_vendas (SK_cliente, SK_produto, SK_data, pedido, valor_venda, quantidade_venda) VALUES (?,?,?,?,?,?)');
+                        $sqlInsert->bind_param("iiiidi", 
+                                                $fatoVenda->SK_cliente,
+                                                $fatoVenda->SK_produto,
+                                                $fatoVenda->SK_data,
+                                                $fatoVenda->pedido,
+                                                $fatoVenda->valor_venda,
+                                                $fatoVenda->qtd_venda);
+
+                        $sqlInsert->execute();
+                        $sumario->setQtdInclusoes();
+
+                    }
 
                 }
 
             }
 
         }
-
+        return $sumario;
     }
 
     private function conectarBanco($banco){
